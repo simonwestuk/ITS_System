@@ -11,5 +11,7 @@ namespace ITS_System.Data
         {
         }
         public DbSet<ITS_System.Models.Asset>? Asset { get; set; }
+        public DbSet<ITS_System.Models.GeneralIssue>? GeneralIssue { get; set; }
+        public DbSet<ITS_System.Models.TechnicalIssue>? TechnicalIssue { get; set; }
     }
 }

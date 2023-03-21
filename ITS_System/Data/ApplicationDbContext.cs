@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ITS_System.Models;
 
 namespace ITS_System.Data
 {
@@ -9,5 +10,6 @@ namespace ITS_System.Data
             : base(options)
         {
         }
+        public DbSet<ITS_System.Models.Asset>? Asset { get; set; }
     }
 }

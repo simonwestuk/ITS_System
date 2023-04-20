@@ -2,9 +2,12 @@
 
 namespace ITS_System.Areas.Admin.Models
 {
-    public class UserRolesViewModel
+    public class ManageUserRolesViewModel
     {
         public IdentityUser User { get; set; }
-        public IEnumerable<string> Roles { get; set; }
+
+        public IdentityRole Role { get; set; }
+
+        public bool InRole { get; set; }
     }
 }

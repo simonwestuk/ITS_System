@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITS_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230504134537_init")]
+    [Migration("20230504140226_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,10 +47,31 @@ namespace ITS_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "78bf8cbe-1f70-4d6d-890b-247bc57e6150",
-                            ConcurrencyStamp = "7b483dfe-e56c-4d5b-97cd-b32652794d29",
+                            Id = "2bd0556f-530e-4984-b322-23c2d2ba4aa1",
+                            ConcurrencyStamp = "eb63387a-d63a-47d3-940b-47d612097552",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "25a95649-7acd-4649-a864-84eea24595a5",
+                            ConcurrencyStamp = "445a9db4-eadc-4a6f-bd1b-3d3236169e83",
+                            Name = "Studio_Staff",
+                            NormalizedName = "STUDIO_STAFF"
+                        },
+                        new
+                        {
+                            Id = "4ae2fd10-b2fb-46c1-ba79-99f5a99b43f5",
+                            ConcurrencyStamp = "3596ff41-339f-4fb0-8c64-a9578eb62458",
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        },
+                        new
+                        {
+                            Id = "f7820a4f-488a-4070-bd0a-8d132465449e",
+                            ConcurrencyStamp = "cd29adce-3f3f-43b0-853d-2a6d61b12d92",
+                            Name = "Management_Team",
+                            NormalizedName = "MANAGEMENT_TEAM"
                         });
                 });
 
@@ -143,17 +164,17 @@ namespace ITS_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "27b9af34-a133-43e2-8dd2-aef04ddb2b8c",
+                            Id = "d8436bf3-fcec-46b0-b6f6-50f2c763f5f2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7b483dfe-e56c-4d5b-97cd-b32652794d29",
+                            ConcurrencyStamp = "f6fc6177-4b34-4233-a91a-51c3e207776b",
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKfuc2clx2XwVGhXxw58nkLqyAasi+UaazBtW4tcMWdrt2PUXXaCfFvljeT/lH7/YQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEH7ikIhhYtReaH3pkZsV+lLqDYBvDLS3jhl64/aFcijG8qwcYFwiVZlE5oELemMSIA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5634b5f6-abbf-46bf-ba01-59195a350868",
+                            SecurityStamp = "b1e558b3-a189-4eba-b883-ff2d2290e33f",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -221,8 +242,8 @@ namespace ITS_System.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "27b9af34-a133-43e2-8dd2-aef04ddb2b8c",
-                            RoleId = "78bf8cbe-1f70-4d6d-890b-247bc57e6150"
+                            UserId = "d8436bf3-fcec-46b0-b6f6-50f2c763f5f2",
+                            RoleId = "2bd0556f-530e-4984-b322-23c2d2ba4aa1"
                         });
                 });
 

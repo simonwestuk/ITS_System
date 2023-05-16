@@ -62,7 +62,12 @@ namespace FlexAppealFitness.Areas.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
         {
-            if (ModelState.IsValid)
+
+            if (classSchedule.InstructorId != null &&
+               classSchedule.DateTime != null &&
+               classSchedule.RoomId != null &&
+               classSchedule.MaxNumbersOfBooking > 0 &&
+               classSchedule.Status != null)
             {
                 _context.Add(classSchedule);
                 await _context.SaveChangesAsync();
@@ -162,14 +167,14 @@ namespace FlexAppealFitness.Areas.Admin
             {
                 _context.Schedule.Remove(classSchedule);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClassScheduleExists(int id)
         {
-          return (_context.Schedule?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Schedule?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

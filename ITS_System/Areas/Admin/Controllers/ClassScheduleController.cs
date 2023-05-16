@@ -23,7 +23,7 @@ namespace FlexAppealFitness.Areas.Admin
         // GET: Admin/ClassSchedule
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Schedule.Include(c => c.Room);
+            var applicationDbContext = _context.Schedule.Include(c => c.Instructor).Include(c => c.Room);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -36,6 +36,7 @@ namespace FlexAppealFitness.Areas.Admin
             }
 
             var classSchedule = await _context.Schedule
+                .Include(c => c.Instructor)
                 .Include(c => c.Room)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (classSchedule == null)
@@ -49,6 +50,7 @@ namespace FlexAppealFitness.Areas.Admin
         // GET: Admin/ClassSchedule/Create
         public IActionResult Create()
         {
+            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email");
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description");
             return View();
         }
@@ -58,7 +60,7 @@ namespace FlexAppealFitness.Areas.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateTime,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
+        public async Task<IActionResult> Create([Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
         {
             if (ModelState.IsValid)
             {
@@ -66,6 +68,7 @@ namespace FlexAppealFitness.Areas.Admin
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
             return View(classSchedule);
         }
@@ -83,6 +86,7 @@ namespace FlexAppealFitness.Areas.Admin
             {
                 return NotFound();
             }
+            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
             return View(classSchedule);
         }
@@ -92,7 +96,7 @@ namespace FlexAppealFitness.Areas.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
         {
             if (id != classSchedule.Id)
             {
@@ -119,6 +123,7 @@ namespace FlexAppealFitness.Areas.Admin
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
             return View(classSchedule);
         }
@@ -132,6 +137,7 @@ namespace FlexAppealFitness.Areas.Admin
             }
 
             var classSchedule = await _context.Schedule
+                .Include(c => c.Instructor)
                 .Include(c => c.Room)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (classSchedule == null)

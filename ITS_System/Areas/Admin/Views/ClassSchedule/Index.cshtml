@@ -16,6 +16,9 @@
                 @Html.DisplayNameFor(model => model.DateTime)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Instructor)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.MaxNumbersOfBooking)
             </th>
             <th>
@@ -32,6 +35,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Instructor.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MaxNumbersOfBooking)

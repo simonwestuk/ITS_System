@@ -93,6 +93,8 @@ namespace FlexAppealFitness.Areas.Admin
             }
             ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
+            ViewData["EqupimentList"] = new SelectList(_context.Equpiments, "Id", "Description");
+            ViewData["WaitingList"] = new SelectList(_context.Users, "Id", "Email");
             return View(classSchedule);
         }
 
@@ -101,7 +103,7 @@ namespace FlexAppealFitness.Areas.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule, string[] WaitingList, string[] EqupimentList)
         {
             if (id != classSchedule.Id)
             {
@@ -130,6 +132,8 @@ namespace FlexAppealFitness.Areas.Admin
             }
             ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
+            ViewData["EqupimentList"] = new SelectList(_context.Equpiments, "Id", "Description");
+            ViewData["WaitingList"] = new SelectList(_context.Users, "Id", "Email");
             return View(classSchedule);
         }
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ITS_System.Data;
 using ITS_System.Models;
+using FlexAppealFitness.Models;
 
 namespace FlexAppealFitness.Areas.Admin
 {
@@ -21,10 +22,18 @@ namespace FlexAppealFitness.Areas.Admin
         }
 
         // GET: Admin/ClassSchedule
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Schedule.Include(c => c.Instructor).Include(c => c.Room);
-            return View(await applicationDbContext.ToListAsync());
+            var classSchedules = from c in _context.Schedule
+                                 select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                classSchedules = classSchedules.Where(s => s.Instructor.Email.Contains(searchString) || s.DateTime.ToString().Contains(searchString));
+            }
+
+            return View(await classSchedules.Include("Instructor").Include("Room").OrderBy(s => s.DateTime).ToListAsync());
         }
 
         // GET: Admin/ClassSchedule/Details/5
@@ -52,49 +61,83 @@ namespace FlexAppealFitness.Areas.Admin
         {
             ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email");
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description");
+            ViewData["EquipmentList"] = new SelectList(_context.Equpiments, "Id", "Name");
             return View();
         }
+
 
         // POST: Admin/ClassSchedule/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule)
+        public async Task<IActionResult> Create(ClassSchedule classSchedule, List<int> EquipmentList)
         {
-
             if (classSchedule.InstructorId != null &&
                classSchedule.DateTime != null &&
                classSchedule.RoomId != null &&
                classSchedule.MaxNumbersOfBooking > 0 &&
                classSchedule.Status != null)
             {
-                _context.Add(classSchedule);
+                _context.Schedule.Add(classSchedule);
                 await _context.SaveChangesAsync();
+
+                foreach (int equipmentId in EquipmentList)
+                {
+                    var equipmentListEntry = new EquipmentListEntry
+                    {
+                        Equipment = _context.Equpiments.Find(equipmentId),
+                        AddedOn = DateTime.Now
+                    };
+
+                    classSchedule.EquipmentList.Add(equipmentListEntry);
+                }
+
+                _context.Schedule.Update(classSchedule);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
+            ViewData["EquipmentList"] = new SelectList(_context.Equpiments, "Id", "Name");
             return View(classSchedule);
         }
 
         // GET: Admin/ClassSchedule/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Schedule == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var classSchedule = await _context.Schedule.FindAsync(id);
+            var classSchedule = await _context.Schedule
+                .Include(c => c.Instructor)
+                .Include(c => c.Room)
+                .Include(c => c.EquipmentList)
+                    .ThenInclude(e => e.Equipment)
+                .Include(c => c.WaitingList)
+                    .ThenInclude(w => w.Customer)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (classSchedule == null)
             {
                 return NotFound();
             }
+
+            // Convert the current equipment list and waiting list to select lists for the view
             ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
-            ViewData["EqupimentList"] = new SelectList(_context.Equpiments, "Id", "Description");
+
+            // Get all equipments and users for selection
+            ViewData["EquipmentList"] = new SelectList(_context.Equpiments, "Id", "Description");
             ViewData["WaitingList"] = new SelectList(_context.Users, "Id", "Email");
+
+            // Mark the currently selected items
+            ViewData["SelectedEquipment"] = classSchedule.EquipmentList.Select(e => e.Equipment.Id).ToList();
+            ViewData["SelectedUsers"] = classSchedule.WaitingList.Select(w => w.Customer.Id).ToList();
+
             return View(classSchedule);
         }
 
@@ -103,38 +146,64 @@ namespace FlexAppealFitness.Areas.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule, string[] WaitingList, string[] EqupimentList)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,InstructorId,MaxNumbersOfBooking,RoomId,Status")] ClassSchedule classSchedule, string[] WaitingList, string[] EquipmentList)
         {
             if (id != classSchedule.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                // Load the existing class schedule from the database
+                var existingClassSchedule = await _context.Schedule.Include(s => s.WaitingList).Include(s => s.EquipmentList)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                // Update the existing class schedule with the values from the form
+                existingClassSchedule.DateTime = classSchedule.DateTime;
+                existingClassSchedule.InstructorId = classSchedule.InstructorId;
+                existingClassSchedule.MaxNumbersOfBooking = classSchedule.MaxNumbersOfBooking;
+                existingClassSchedule.RoomId = classSchedule.RoomId;
+                existingClassSchedule.Status = classSchedule.Status;
+
+                // Update waiting list
+                existingClassSchedule.WaitingList.Clear();
+                foreach (var userId in WaitingList)
                 {
-                    _context.Update(classSchedule);
-                    await _context.SaveChangesAsync();
+                    var user = await _context.Users.FindAsync(userId);
+                    if (user != null)
+                    {
+                        existingClassSchedule.WaitingList.Add(new WaitingListEntry { Customer = user, AddedOn = DateTime.Now });
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+
+                // Update equipment list
+                existingClassSchedule.EquipmentList.Clear();
+                foreach (var equipmentId in EquipmentList)
                 {
-                    if (!ClassScheduleExists(classSchedule.Id))
+                    var equipment = await _context.Equpiments.FindAsync(int.Parse(equipmentId));
+                    if (equipment != null)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        existingClassSchedule.EquipmentList.Add(new EquipmentListEntry { Equipment = equipment, AddedOn = DateTime.Now });
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                _context.Update(existingClassSchedule);
+                await _context.SaveChangesAsync();
             }
-            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
-            ViewData["EqupimentList"] = new SelectList(_context.Equpiments, "Id", "Description");
-            ViewData["WaitingList"] = new SelectList(_context.Users, "Id", "Email");
-            return View(classSchedule);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClassScheduleExists(classSchedule.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Admin/ClassSchedule/Delete/5

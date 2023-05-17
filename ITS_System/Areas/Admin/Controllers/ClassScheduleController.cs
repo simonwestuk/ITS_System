@@ -8,10 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using ITS_System.Data;
 using ITS_System.Models;
 using FlexAppealFitness.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace FlexAppealFitness.Areas.Admin
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ClassScheduleController : Controller
     {
         private readonly ApplicationDbContext _context;

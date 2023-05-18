@@ -8,16 +8,40 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ITS_System.Migrations
+namespace FlexAppealFitness.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230511123525_cap")]
-    partial class cap
+    [Migration("20230518084538_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.15");
+
+            modelBuilder.Entity("FlexAppealFitness.Models.EquipmentListEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("AddedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ClassScheduleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassScheduleId");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.ToTable("EquipmentListEntry");
+                });
 
             modelBuilder.Entity("FlexAppealFitness.Models.WaitingListEntry", b =>
                 {
@@ -109,9 +133,6 @@ namespace ITS_System.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ClassScheduleId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -121,8 +142,6 @@ namespace ITS_System.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClassScheduleId");
 
                     b.ToTable("Equpiments");
                 });
@@ -177,31 +196,38 @@ namespace ITS_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2d75b1b0-f968-4487-add8-aa33ea1f4ede",
-                            ConcurrencyStamp = "c74d4460-c3ed-4f24-a0ce-a9c9c548e09e",
+                            Id = "6101f3a2-6277-4246-aeec-fd41b560f86e",
+                            ConcurrencyStamp = "65c691da-4818-4199-b88a-d6ef046496db",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "551960b0-a037-4315-a2cd-c44248e59ca0",
-                            ConcurrencyStamp = "a582059d-23f3-4844-be51-62b2eab0bad2",
+                            Id = "37cde265-9b56-4bb1-abc9-274f73e243bb",
+                            ConcurrencyStamp = "f1904aaf-ac38-40e6-9015-d70aec799dfd",
                             Name = "Studio_Staff",
                             NormalizedName = "STUDIO_STAFF"
                         },
                         new
                         {
-                            Id = "6c396a4c-3a2e-48e9-8077-61796e208ebe",
-                            ConcurrencyStamp = "bfa7d29e-95b9-455b-a541-6bb356859cff",
+                            Id = "f4c3ade3-2188-48c9-a439-3b4e3748009a",
+                            ConcurrencyStamp = "37dad81a-0aaa-4094-9154-5d8107066e76",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = "f8b8ecb9-5a56-4c9a-ace4-0b5225fb6575",
-                            ConcurrencyStamp = "6b1098e0-99bf-4e81-b841-ab1fe80d0afc",
+                            Id = "797f4b68-0a85-4f06-86ea-0134b26c1ac7",
+                            ConcurrencyStamp = "df9253c9-1cff-421c-bac7-c734c333a1ed",
                             Name = "Management_Team",
                             NormalizedName = "MANAGEMENT_TEAM"
+                        },
+                        new
+                        {
+                            Id = "b53f93a4-4220-45a4-afe6-ee69b78c7a6c",
+                            ConcurrencyStamp = "5bc7369b-a8fd-46ef-beca-f3326892f672",
+                            Name = "Instructor",
+                            NormalizedName = "INSTRUCTOR"
                         });
                 });
 
@@ -294,17 +320,17 @@ namespace ITS_System.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e9bdd798-7adf-4a73-ab48-955b5b6e169d",
+                            Id = "b50f6bb3-c972-4194-a0f7-8bfff716c16b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "adeff7e9-9696-470b-afc5-007ab5d75c2f",
+                            ConcurrencyStamp = "4cbae152-284c-45d0-8b83-bc615adf2183",
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEH8vyYGdnz/rhgXDVc7MrHztKQOVJqfmgRfDSgD3RzWzJzInyJ/3BWAeYAwi3iFKTA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENwlGrON8VluT47EWZnEqkqQ0RfQFN2Zfi1flnWBv7GpDabIuqiDnl0UkzGKiBJoQQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d3d76c67-3991-4162-9a04-a96b7733d05a",
+                            SecurityStamp = "2cc5dc41-abfb-47d8-8435-ac45cf335d70",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -372,8 +398,8 @@ namespace ITS_System.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "e9bdd798-7adf-4a73-ab48-955b5b6e169d",
-                            RoleId = "2d75b1b0-f968-4487-add8-aa33ea1f4ede"
+                            UserId = "b50f6bb3-c972-4194-a0f7-8bfff716c16b",
+                            RoleId = "6101f3a2-6277-4246-aeec-fd41b560f86e"
                         });
                 });
 
@@ -394,6 +420,21 @@ namespace ITS_System.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("FlexAppealFitness.Models.EquipmentListEntry", b =>
+                {
+                    b.HasOne("ITS_System.Models.ClassSchedule", null)
+                        .WithMany("EquipmentList")
+                        .HasForeignKey("ClassScheduleId");
+
+                    b.HasOne("ITS_System.Models.Equipment", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Equipment");
                 });
 
             modelBuilder.Entity("FlexAppealFitness.Models.WaitingListEntry", b =>
@@ -447,13 +488,6 @@ namespace ITS_System.Migrations
                     b.Navigation("Instructor");
 
                     b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("ITS_System.Models.Equipment", b =>
-                {
-                    b.HasOne("ITS_System.Models.ClassSchedule", null)
-                        .WithMany("Equpiments")
-                        .HasForeignKey("ClassScheduleId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -511,7 +545,7 @@ namespace ITS_System.Migrations
                 {
                     b.Navigation("Attendees");
 
-                    b.Navigation("Equpiments");
+                    b.Navigation("EquipmentList");
 
                     b.Navigation("WaitingList");
                 });

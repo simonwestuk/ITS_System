@@ -196,6 +196,8 @@ namespace FlexAppealFitness.Areas.Admin
 
                 _context.Update(existingClassSchedule);
                 await _context.SaveChangesAsync();
+
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -237,17 +239,26 @@ namespace FlexAppealFitness.Areas.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Schedule == null)
+            try
             {
-                return Problem("Entity set 'ApplicationDbContext.Schedule'  is null.");
+                if (_context.Schedule == null)
+                {
+                    return Problem("Entity set 'ApplicationDbContext.Schedule'  is null.");
+                }
+                var classSchedule = await _context.Schedule.FindAsync(id);
+                if (classSchedule != null)
+                {
+                    _context.Schedule.Remove(classSchedule);
+                }
+
+                await _context.SaveChangesAsync();
+                
             }
-            var classSchedule = await _context.Schedule.FindAsync(id);
-            if (classSchedule != null)
+            catch(Exception ex)
             {
-                _context.Schedule.Remove(classSchedule);
+                Console.WriteLine($"Error: { ex.Message }"); //Send and check error
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

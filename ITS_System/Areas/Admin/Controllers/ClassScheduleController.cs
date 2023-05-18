@@ -10,6 +10,7 @@ using ITS_System.Models;
 using FlexAppealFitness.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace FlexAppealFitness.Areas.Admin
 {
@@ -18,10 +19,12 @@ namespace FlexAppealFitness.Areas.Admin
     public class ClassScheduleController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ClassScheduleController(ApplicationDbContext context)
+        public ClassScheduleController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Admin/ClassSchedule
@@ -60,9 +63,9 @@ namespace FlexAppealFitness.Areas.Admin
         }
 
         // GET: Admin/ClassSchedule/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email");
+            ViewData["InstructorId"] = new SelectList(await _userManager.GetUsersInRoleAsync("Instructor"), "Id", "Email");
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description");
             ViewData["EquipmentList"] = new SelectList(_context.Equpiments, "Id", "Name");
             return View();
@@ -101,7 +104,7 @@ namespace FlexAppealFitness.Areas.Admin
 
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
+            ViewData["InstructorId"] = new SelectList(await _userManager.GetUsersInRoleAsync("Instructor"), "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
             ViewData["EquipmentList"] = new SelectList(_context.Equpiments, "Id", "Name");
             return View(classSchedule);

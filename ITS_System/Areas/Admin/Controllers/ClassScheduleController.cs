@@ -133,7 +133,7 @@ namespace FlexAppealFitness.Areas.Admin
             }
 
             // Convert the current equipment list and waiting list to select lists for the view
-            ViewData["InstructorId"] = new SelectList(_context.Users, "Id", "Email", classSchedule.InstructorId);
+            ViewData["InstructorId"] = new SelectList(await _userManager.GetUsersInRoleAsync("Instructor"), "Id", "Email", classSchedule.InstructorId);
             ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Description", classSchedule.RoomId);
 
             // Get all equipments and users for selection

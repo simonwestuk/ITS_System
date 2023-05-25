@@ -39,28 +39,6 @@ namespace FlexAppealFitness.Areas.Customer.Views
         // GET: Customer/Bookings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Bookings == null)
-            {
-                return NotFound();
-            }
-
-            var booking = await _context.Bookings
-                .Include(b => b.Attendee)
-                .Include(b => b.Class)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            return View(booking);
-        }
-
-        // POST: Customer/Bookings/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
             if (_context.Bookings == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Bookings'  is null.");
@@ -70,7 +48,7 @@ namespace FlexAppealFitness.Areas.Customer.Views
             {
                 _context.Bookings.Remove(booking);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

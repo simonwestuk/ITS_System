@@ -48,13 +48,12 @@ namespace FlexAppealFitness.Areas.Customer.Controllers
             book.Status = Enums.BookingStatus.Active;
             book.Attendee = currentUser;
 
-            var currentClass = await _context.Schedule.FindAsync(Id);
+            var currentClass =  await _context.Schedule.Include(s => s.Attendees).Where(s => s.Id == Id).FirstOrDefaultAsync();
          
             if (currentClass == null)
             {
                 return NotFound();
             }
-
 
             bool doubleBook = currentClass.Attendees.Any(a => a.AttendeeId == currentUser.Id);
            
